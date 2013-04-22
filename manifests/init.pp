@@ -43,6 +43,7 @@ class beanstalkd(
     debian, default: {
       $config_file      = '/etc/default/beanstalkd'
       $config_template  = 'config.debian.erb'
+      $beanstalkd_user  = 'beanstalkd'
     }
   }
 
@@ -50,17 +51,39 @@ class beanstalkd(
     ensure => installed,
   }
 
-  ->file { 'beanstalkd_config':
+  file { 'beanstalkd_config':
     ensure    => present,
     path      => $config_file,
     content   => template("beanstalkd/${config_template}"),
     notify    => Service[beanstalkd]
   }
 
-  ->service { 'beanstalkd':
+  service { 'beanstalkd':
     ensure    => $start_service ? {
       false => 'stopped',
       true  => 'running'
     }
   }
+
+  Package['beanstalkd'] -> File['beanstalkd_config']
+
+  if $binlog_dir {
+    exec { 'beanstalkd_binlog_dir' :
+      command => "/usr/bin/install -o${beanstalkd_user} -m0755 -d '${binlog_dir}'",
+      creates => $binlog_dir,
+      logoutput => true
+    }
+
+    file { 'beanstalkd_binlog_dir' :
+      ensure => directory,
+      path => $binlog_dir,
+      mode => 0755
+    }
+
+    Package['beanstalkd'] -> Exec['beanstalkd_binlog_dir']
+    Exec['beanstalkd_binlog_dir'] -> File['beanstalkd_binlog_dir']
+    File['beanstalkd_binlog_dir'] -> File['beanstalkd_config']
+  }
+
+  File['beanstalkd_config'] -> Service['beanstalkd']
 }
