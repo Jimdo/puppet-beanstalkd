@@ -1,3 +1,3 @@
 fixtures:
   symlinks:
-    "skeleton": "#{source_dir}"
+    "beanstalkd": "#{source_dir}"
