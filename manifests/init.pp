@@ -47,7 +47,7 @@ class beanstalkd(
   }
 
   package { 'beanstalkd':
-    ensure => present,
+    ensure => installed,
   }
 
   ->file { 'beanstalkd_config':
