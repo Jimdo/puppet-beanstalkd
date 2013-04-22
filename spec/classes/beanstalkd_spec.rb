@@ -29,6 +29,8 @@ describe 'beanstalkd' do
     it do
       should contain_file('beanstalkd_config') \
         .with_content(/^BEANSTALKD_BINLOG_DIR\=\/test\/folder\/binlog$/)
+
+      should contain_file('beanstalk_binlog_dir')
     end
   end
 
