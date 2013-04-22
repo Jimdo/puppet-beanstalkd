@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe 'beanstalkd' do
-  let (:facts) { {:operatingsystem => "debianWURST"} }
+  let (:facts) { {:operatingsystem => "debian"} }
 
   it { should contain_package('beanstalkd').with_ensure('installed') }
 
