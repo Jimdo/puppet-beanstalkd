@@ -1,17 +1,16 @@
-Skeleton Puppet Module
-======================
+# puppet-beanstalkd
 
-This is a testable Puppet module designed for you or your organization to fork
-and modify appropriately. The module comes with everything you need to develop
-infrastructure code with Puppet and feel confident about it. See chapter
-**Testing** to learn more.
+puppet module which takes care of installation and configuration of beanstalkd.
 
-(While you're encouraged to customize everything in this module to fit your
-needs, I recommend to keep the Testing chapter as an important part of this
-README.)
+## Installation
 
-Testing
-=======
+TODO
+
+## Usage
+
+TODO
+
+## Testing
 
 The module comes with some testing facilities allowing you to iterate quickly
 on module changes. After installing Vagrant and the required Ruby gems, most
@@ -99,12 +98,20 @@ for your GitHub repository to get free continuous integration.
 Implementing CI with other systems should be as simple as running the commands
 in `.travis.yml`.
 
-License and Author
-==================
+
+## Author
+
+### puppet-skeleton
 
 Author:: Mathias Lafeldt (<mathias.lafeldt@gmail.com>)
-
 Copyright:: 2013, Mathias Lafeldt
+
+### puppet-beanstalkd
+
+Author:: Deniz Adrian (<zined@adrianer.de>)
+Copyright:: 2013, Deniz Adrian
+
+## License
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
