@@ -40,44 +40,51 @@ class beanstalkd(
 ) {
 
   case $::operatingsystem {
-    debian, default: {
+    debian: {
       $config_file      = '/etc/default/beanstalkd'
       $config_template  = 'config.debian.erb'
-      $beanstalkd_user  = 'beanstalkd'
+      $user             = 'beanstalkd'
+      $package_name     = 'beanstalkd'
+    }
+    default: {
+      fail("Module beanstalkd is not supported on ${::operatingsystem}")
     }
   }
 
   package { 'beanstalkd':
-    ensure => installed,
+    ensure => 'installed',
+    name   => $package_name,
   }
 
   file { 'beanstalkd_config':
-    ensure    => present,
+    ensure    => 'present',
     path      => $config_file,
     content   => template("beanstalkd/${config_template}"),
-    notify    => Service[beanstalkd]
+    notify    => Service['beanstalkd'],
+  }
+
+  $service_state = $start_service ? {
+    false => 'stopped',
+    true  => 'running',
   }
 
   service { 'beanstalkd':
-    ensure    => $start_service ? {
-      false => 'stopped',
-      true  => 'running'
-    }
+    ensure => $service_state,
   }
 
   Package['beanstalkd'] -> File['beanstalkd_config']
 
   if $binlog_dir {
     exec { 'beanstalkd_binlog_dir' :
-      command => "/usr/bin/install -o${beanstalkd_user} -m0755 -d '${binlog_dir}'",
-      creates => $binlog_dir,
-      logoutput => true
+      command   => "/usr/bin/install -o${user} -m0755 -d '${binlog_dir}'",
+      creates   => $binlog_dir,
+      logoutput => true,
     }
 
     file { 'beanstalkd_binlog_dir' :
-      ensure => directory,
-      path => $binlog_dir,
-      mode => 0755
+      ensure => 'directory',
+      path   => $binlog_dir,
+      mode   => '0755',
     }
 
     Package['beanstalkd'] -> Exec['beanstalkd_binlog_dir']
