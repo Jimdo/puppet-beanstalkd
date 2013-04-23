@@ -60,4 +60,13 @@ describe 'beanstalkd' do
         .with_content(/^BEANSTALKD_JOB_MAX_SIZE\=87654$/)
     end
   end
+
+  context 'beanstalkd not on debian' do
+    let (:facts) { {:operatingsystem => "WindowsNT"} }
+    it {
+      expect {
+        subject
+      }.to raise_error(Puppet::Error, /Module beanstalkd is not supported on WindowsNT/)
+    }
+  end
 end
