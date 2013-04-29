@@ -1,14 +1,12 @@
 require 'puppetlabs_spec_helper/rake_tasks'
 
-desc 'Run all tests'
-task :test => [:lint, :spec]
-
 namespace :vagrant do
-  MODULE_NAME    = ENV.fetch('MODULE_NAME',
-                             File.basename(File.dirname(__FILE__)).
-                             sub(/^puppet-/, ''))
-  FIXTURES_PATH  = ENV.fetch('FIXTURES_PATH',
-                             File.join(ENV.fetch('TMPDIR', '/tmp'), 'fixtures'))
+  MODULE_NAME = ENV.fetch('MODULE_NAME',
+                          File.basename(File.dirname(__FILE__)).
+                          sub(/^puppet-/, ''))
+  FIXTURES_PATH = ENV.fetch('FIXTURES_PATH',
+                            File.join(ENV.fetch('TMPDIR', '/tmp'),
+                                      'puppet-fixtures', MODULE_NAME))
   MODULES_PATH   = File.join(FIXTURES_PATH, 'modules')
   MANIFESTS_PATH = File.join(FIXTURES_PATH, 'manifests')
   MANIFEST_FILE  = 'init.pp'
@@ -20,7 +18,11 @@ namespace :vagrant do
     ENV['MANIFEST_FILE']  = MANIFEST_FILE
   end
 
-  task :prepare_modules do
+  task :cleanup_modules do
+    rm_rf MODULES_PATH
+  end
+
+  task :prepare_modules => :cleanup_modules do
     # Install module dependencies as specified in Puppetfile.
     sh 'librarian-puppet', 'install', '--path', MODULES_PATH
   end
@@ -33,6 +35,7 @@ namespace :vagrant do
     end
   end
 
+  desc 'Provision the VM using Puppet'
   task :provision => [:prepare_modules, :prepare_manifest, :export_vars] do
     # Provision VM depending on its state.
     case `vagrant status`
@@ -42,11 +45,24 @@ namespace :vagrant do
     end.each { |cmd| sh 'vagrant', cmd }
   end
 
-  task :halt => :export_vars do
+  desc 'SSH into the VM'
+  task :ssh do
+    sh 'vagrant', 'ssh'
+  end
+
+  desc 'Shutdown the VM'
+  task :halt do
     sh 'vagrant', 'halt', '--force'
   end
 
+  desc 'Destroy the VM'
   task :destroy => :export_vars do
     sh 'vagrant', 'destroy', '--force'
   end
 end
+
+desc 'Run lint checks and spec examples'
+task :travis => [:lint, :spec]
+
+desc 'Run all tests'
+task :test => [:lint, :spec, 'vagrant:provision', 'vagrant:halt']
