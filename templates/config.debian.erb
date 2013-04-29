@@ -4,12 +4,28 @@
 
 BEANSTALKD_LISTEN_ADDR=<%= @listen_addr %>
 BEANSTALKD_LISTEN_PORT=<%= @listen_port %>
-BEANSTALKD_BINLOG_DIR=<%= @binlog_dir %>
-BEANSTALKD_BINLOG_MAX_SIZE=<%= @binlog_max_size %>
-BEANSTALKD_FSYNC_MAX=<%= @fsync_max %>
-BEANSTALKD_JOB_MAX_SIZE=<%= @job_max_size %>
 
 DAEMON_OPTS="-l $BEANSTALKD_LISTEN_ADDR -p $BEANSTALKD_LISTEN_PORT"
+
+<% if @binlog %>
+BEANSTALKD_BINLOG_DIR=<%= @binlog_dir %>
+<% end %>
+
+<% if @binlog_max_size %>
+BEANSTALKD_BINLOG_MAX_SIZE=<%= @binlog_max_size %>
+<% end %>
+
+<% if @fsync_max %>
+BEANSTALKD_FSYNC_MAX=<%= @fsync_max %>
+<% end %>
+
+<% if @job_max_size %>
+BEANSTALKD_JOB_MAX_SIZE=<%= @job_max_size %>
+<% end %>
+
+#######
+# yes, we could write that even shorter, but this is sooooo testable :)
+#
 
 if [ "x" != "x$BEANSTALKD_BINLOG_DIR" ]; then
   DAEMON_OPTS="$DAEMON_OPTS -b $BEANSTALKD_BINLOG_DIR"
