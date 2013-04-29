@@ -8,10 +8,10 @@
 #  $listen_addr:: Listen on address <addr> (default is 127.0.0.1)
 #  $listen_port:: Listen on TCP port <port> (default is 11300).
 #  $start_service:: true/false. (default is false)
-#  $binlog_dir:: Use a binlog to keep jobs on persistent storage in <dir>.
-#                Upon startup, beanstalkd will recover any binlog that is
-#                present in <dir>, then, during normal operation, append new
-#                jobs and changes in state to the binlog.
+#  $binlog:: Use a binlog to keep jobs on persistent storage in
+#            '/var/lib/beanstalkd' Upon startup, beanstalkd will recover any
+#            binlog that is present in <dir>, then, during normal operation,
+#            append new jobs and changes in state to the binlog.
 #  $binlog_max_size:: The maximum size in bytes of each binlog file.
 #  $fsync_max:: Call fsync(2) at most once every <ms> milliseconds.
 #               This will recuce disk activity and improve speed at the
@@ -26,14 +26,14 @@
 #  class { 'beanstalkd':
 #    listen_addr => '1.2.3.4',
 #    listen_port => 12345,
-#    binlog_dir => '/var/lib/beanstalkd/binlog'
+#    binlog      => true,
 #  }
 #
 class beanstalkd(
   $listen_addr      = '127.0.0.1',
   $listen_port      = '11300',
   $start_service    = false,
-  $binlog_dir       = undef,
+  $binlog           = false,
   $binlog_max_size  = undef,
   $fsync_max        = undef,
   $job_max_size     = undef
@@ -45,6 +45,7 @@ class beanstalkd(
       $config_template  = 'config.debian.erb'
       $user             = 'beanstalkd'
       $package_name     = 'beanstalkd'
+      $binlog_dir       = '/var/lib/beanstalkd'
     }
     default: {
       fail("Module beanstalkd is not supported on ${::operatingsystem}")
@@ -74,7 +75,7 @@ class beanstalkd(
 
   Package['beanstalkd'] -> File['beanstalkd_config']
 
-  if $binlog_dir {
+  if $binlog {
     exec { 'beanstalkd_binlog_dir' :
       command   => "/usr/bin/install -o${user} -m0755 -d '${binlog_dir}'",
       creates   => $binlog_dir,

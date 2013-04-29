@@ -23,12 +23,12 @@ describe 'beanstalkd' do
     end
   end
 
-  context 'with binlog_dir => "/test/folder/binlog"' do
-    let (:params) { {:binlog_dir => '/test/folder/binlog'} }
+  context 'with binlog => true' do
+    let (:params) { {:binlog => true} }
 
     it do
       should contain_file('beanstalkd_config') \
-        .with_content(/^BEANSTALKD_BINLOG_DIR\=\/test\/folder\/binlog$/)
+        .with_content(/^BEANSTALKD_BINLOG_DIR\=\/var\/lib\/beanstalkd$/)
 
       should contain_file('beanstalkd_binlog_dir')
     end
