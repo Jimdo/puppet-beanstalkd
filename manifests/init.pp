@@ -57,7 +57,7 @@ class beanstalkd(
     name   => $package_name,
   }
 
-  file { 'beanstalkd_config':
+  file { $config_file :
     ensure    => 'present',
     path      => $config_file,
     content   => template("beanstalkd/${config_template}"),
@@ -73,7 +73,7 @@ class beanstalkd(
     ensure => $service_state,
   }
 
-  Package['beanstalkd'] -> File['beanstalkd_config']
+  Package['beanstalkd'] -> File[$config_file]
 
   if $binlog {
     exec { 'beanstalkd_binlog_dir' :
@@ -82,16 +82,16 @@ class beanstalkd(
       logoutput => true,
     }
 
-    file { 'beanstalkd_binlog_dir' :
+    file { $binlog_dir :
       ensure => 'directory',
       path   => $binlog_dir,
       mode   => '0755',
     }
 
     Package['beanstalkd'] -> Exec['beanstalkd_binlog_dir']
-    Exec['beanstalkd_binlog_dir'] -> File['beanstalkd_binlog_dir']
-    File['beanstalkd_binlog_dir'] -> File['beanstalkd_config']
+    Exec['beanstalkd_binlog_dir'] -> File[$binlog_dir]
+    File[$binlog_dir] -> File[$config_file]
   }
 
-  File['beanstalkd_config'] -> Service['beanstalkd']
+  File[$config_file] -> Service['beanstalkd']
 }

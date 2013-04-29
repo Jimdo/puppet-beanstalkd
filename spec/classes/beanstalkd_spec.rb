@@ -9,7 +9,7 @@ describe 'beanstalkd' do
     let (:params) { {:listen_addr => '1.2.3.4'} }
 
     it do
-      should contain_file('beanstalkd_config') \
+      should contain_file('/etc/default/beanstalkd') \
         .with_content(/^BEANSTALKD_LISTEN_ADDR\=1\.2\.3\.4$/)
     end
   end
@@ -18,7 +18,7 @@ describe 'beanstalkd' do
     let (:params) { {:listen_port => '12345'} }
 
     it do
-      should contain_file('beanstalkd_config') \
+      should contain_file('/etc/default/beanstalkd') \
         .with_content(/^BEANSTALKD_LISTEN_PORT\=12345$/)
     end
   end
@@ -27,10 +27,17 @@ describe 'beanstalkd' do
     let (:params) { {:binlog => true} }
 
     it do
-      should contain_file('beanstalkd_config') \
+      should contain_file('/etc/default/beanstalkd') \
         .with_content(/^BEANSTALKD_BINLOG_DIR\=\/var\/lib\/beanstalkd$/)
 
-      should contain_file('beanstalkd_binlog_dir')
+      should contain_file('/var/lib/beanstalkd')
+    end
+  end
+
+  context 'with binlog => false' do
+    it do
+      should_not contain_file('/etc/default/beanstalkd') \
+        .with_content(/^BEANSTALKD_BINLOG_DIR\=\/var\/lib\/beanstalkd$/)
     end
   end
 
@@ -38,8 +45,15 @@ describe 'beanstalkd' do
     let (:params) { {:binlog_max_size => 98765} }
 
     it do
-      should contain_file('beanstalkd_config') \
+      should contain_file('/etc/default/beanstalkd') \
         .with_content(/^BEANSTALKD_BINLOG_MAX_SIZE\=98765$/)
+    end
+  end
+
+  context 'without binlog_max_size' do
+    it do
+      should_not contain_file('/etc/default/beanstalkd') \
+        .with_content(/^BEANSTALKD_BINLOG_MAX_SIZE\=[0-9+]$/)
     end
   end
 
@@ -47,8 +61,15 @@ describe 'beanstalkd' do
     let (:params) { {:fsync_max => 10} }
 
     it do
-      should contain_file('beanstalkd_config') \
+      should contain_file('/etc/default/beanstalkd') \
         .with_content(/^BEANSTALKD_FSYNC_MAX\=10$/)
+    end
+  end
+
+  context 'without fsync_max' do
+    it do
+      should_not contain_file('/etc/default/beanstalkd') \
+        .with_content(/^BEANSTALKD_FSYNC_MAX\=[0-9+]$/)
     end
   end
 
@@ -56,8 +77,15 @@ describe 'beanstalkd' do
     let (:params) { {:job_max_size => 87654} }
 
     it do
-      should contain_file('beanstalkd_config') \
+      should contain_file('/etc/default/beanstalkd') \
         .with_content(/^BEANSTALKD_JOB_MAX_SIZE\=87654$/)
+    end
+  end
+
+  context 'with_out job_max_size' do
+    it do
+      should_not contain_file('/etc/default/beanstalkd') \
+        .with_content(/^BEANSTALKD_JOB_MAX_SIZE\=[0-9+]$/)
     end
   end
 
