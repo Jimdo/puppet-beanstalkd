@@ -1,12 +1,12 @@
 language: ruby
 
 rvm:
-  - 1.9.2
+  - 1.8.7
   - 1.9.3
 
 install: bundle install
 
-script: bundle exec rake test
+script: bundle exec rake travis
 
 branches:
   only:
