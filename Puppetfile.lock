@@ -1,0 +1,8 @@
+PATH
+  remote: .
+  specs:
+    beanstalkd (0.0.1)
+
+DEPENDENCIES
+  beanstalkd (>= 0)
+
