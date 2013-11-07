@@ -24,15 +24,15 @@ describe 'beanstalkd' do
   end
 
   context 'with binlog => true' do
-    let (:params) { {:binlog => true, :user => "horst"} }
+    let (:params) { {:binlog => true} }
 
     it do
       should contain_file('/etc/default/beanstalkd') \
         .with_content(/^BEANSTALKD_BINLOG_DIR\=\/var\/lib\/beanstalkd$/)
 
       should contain_file('/var/lib/beanstalkd') \
-        .with_owner("horst") \
-        .with_group("horst")
+        .with_owner("beanstalkd") \
+        .with_group("beanstalkd")
     end
   end
 
