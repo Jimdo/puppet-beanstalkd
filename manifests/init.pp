@@ -85,6 +85,8 @@ class beanstalkd(
     file { $binlog_dir :
       ensure => 'directory',
       path   => $binlog_dir,
+      owner  => $user,
+      group  => $user,
       mode   => '0755',
     }
 

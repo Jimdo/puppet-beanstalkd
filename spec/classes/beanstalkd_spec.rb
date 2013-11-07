@@ -30,7 +30,9 @@ describe 'beanstalkd' do
       should contain_file('/etc/default/beanstalkd') \
         .with_content(/^BEANSTALKD_BINLOG_DIR\=\/var\/lib\/beanstalkd$/)
 
-      should contain_file('/var/lib/beanstalkd')
+      should contain_file('/var/lib/beanstalkd') \
+        .with_owner("beanstalkd") \
+        .with_group("beanstalkd")
     end
   end
 
