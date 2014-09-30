@@ -1,6 +1,5 @@
 # Bundler
 /.bundle/
-/.gems/
 /bin/
 /bundle/
 /vendor/gems/
@@ -8,9 +7,7 @@
 # Librarian-Puppet
 /.librarian/
 /.tmp/
+/fixtures/
 
 # Vagrant
 .vagrant
-
-# Fixtures
-/spec/fixtures/
